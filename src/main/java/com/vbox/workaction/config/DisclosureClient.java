@@ -59,26 +59,8 @@ public class DisclosureClient {
             // Network / client errors (e.g., I/O, timeouts) - try to extract a concise message from downstream response body if present
             log.error("Disclosure service unavailable: {}", baseUrl + searchUrl, ex);
             String downstreamMsg = ex.getMessage();
-            String extractedMessage = null;
-            try {
-                if (downstreamMsg != null) {
-                    int idx = downstreamMsg.indexOf('{');
-                    if (idx >= 0) {
-                        String jsonPart = downstreamMsg.substring(idx);
-                        // attempt to parse the JSON body and extract a user-friendly message or first error message
-                        ApiResponse parsed = objectMapper.readValue(jsonPart, ApiResponse.class);
-                        if (parsed != null) {
-                            if (parsed.message() != null && !parsed.message().isEmpty()) {
-                                extractedMessage = parsed.message();
-                            } else if (parsed.errors() != null && !parsed.errors().isEmpty()) {
-                                extractedMessage = parsed.errors().get(0).message();
-                            }
-                        }
-                    }
-                }
-            } catch (Exception e) {
-                log.debug("Failed to parse downstream error body: {}", downstreamMsg, e);
-            }
+            String extractedMessage = extractDownstreamMessage(downstreamMsg);
+
             String errMsg = extractedMessage != null ? extractedMessage : (downstreamMsg != null ? downstreamMsg : "Disclosure service unavailable");
             var apiMessage = new ApiMessage("DISCLOSURE_SERVICE_UNAVAILABLE", errMsg);
             // set top-level message to a concise statement including any extracted downstream message
@@ -90,5 +72,28 @@ public class DisclosureClient {
             var apiMessage = new ApiMessage("DISCLOSURE_SERVICE_ERROR", ex.getMessage() != null ? ex.getMessage() : "Unexpected error");
             return new ApiResponse("ERROR", HttpStatus.INTERNAL_SERVER_ERROR.value(), "Failed to call disclosure service search endpoint", List.of(apiMessage), List.of(), null);
         }
+    }
+
+    private String extractDownstreamMessage(String downstreamMsg) {
+        if (downstreamMsg == null) {
+            return null;
+        }
+        try {
+            int idx = downstreamMsg.indexOf('{');
+            if (idx >= 0) {
+                String jsonPart = downstreamMsg.substring(idx);
+                ApiResponse parsed = objectMapper.readValue(jsonPart, ApiResponse.class);
+                if (parsed != null) {
+                    if (parsed.message() != null && !parsed.message().isEmpty()) {
+                        return parsed.message();
+                    } else if (parsed.errors() != null && !parsed.errors().isEmpty()) {
+                        return parsed.errors().get(0).message();
+                    }
+                }
+            }
+        } catch (Exception e) {
+            log.debug("Failed to parse downstream error body: {}", downstreamMsg, e);
+        }
+        return null;
     }
 }
