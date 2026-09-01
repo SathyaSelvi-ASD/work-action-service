@@ -6,4 +6,6 @@ import org.springframework.data.domain.Page;
 
 public interface SearchWorkActionUseCase {
     Page<WorkAction> search(WorkActionSearchCriteria criteria);
+
+    com.vbox.workaction.api.dto.response.ApiResponse searchDisclosures(java.util.Map<String, Object> request);
 }

@@ -37,4 +37,10 @@ public class WorkActionController {
                 null, null, searchResults);
         return ResponseEntity.ok(response);
     }
+
+    @PostMapping("/search/disclosures")
+    public ResponseEntity<ApiResponse> searchDisclosures(@RequestBody java.util.Map<String, Object> request) {
+        ApiResponse disclosureResp = searchUseCase.searchDisclosures(request);
+        return ResponseEntity.ok(disclosureResp);
+    }
 }
