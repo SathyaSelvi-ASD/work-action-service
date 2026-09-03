@@ -4,8 +4,9 @@ Spring Boot clean/hexagonal-style sample with no Disclosure domain classes. It p
 
 ## APIs
 
-- `POST /api/work-actions/v1`
-- `GET /api/work-actions/v1/search?refId=`
+- `POST /api/work-actions/v1` - Create a new work action
+- `GET /api/work-actions/v1/search?refId=` - Search work actions by reference ID
+- `POST /api/work-actions/v1/search/disclosures` - Search disclosures
 
 ## Create request
 
@@ -17,6 +18,55 @@ Spring Boot clean/hexagonal-style sample with no Disclosure domain classes. It p
   "priority": "HIGH",
   "dueDate": "2026-09-15",
   "assignedTo": "review-team"
+}
+```
+
+## Search Disclosures
+
+### Request
+
+```bash
+curl -X POST http://localhost:8080/api/work-actions/v1/search/disclosures \
+  -H "Content-Type: application/json" \
+  -d '{
+    "referenceId": "DISC-1001",
+    "status": "PENDING",
+    "priority": "HIGH"
+  }'
+```
+
+### Request Body
+
+The endpoint accepts a flexible JSON object with optional search criteria:
+
+```json
+{
+  "referenceId": "DISC-1001",
+  "status": "PENDING",
+  "priority": "HIGH",
+  "assignedTo": "review-team",
+  "dueDateFrom": "2026-09-01",
+  "dueDateTo": "2026-09-30"
+}
+```
+
+### Response
+
+```json
+{
+  "status": "success",
+  "code": 200,
+  "message": "Disclosures retrieved successfully",
+  "data": [
+    {
+      "referenceId": "DISC-1001",
+      "title": "Review submitted disclosure",
+      "description": "Perform compliance review",
+      "priority": "HIGH",
+      "dueDate": "2026-09-15",
+      "assignedTo": "review-team"
+    }
+  ]
 }
 ```
 
