@@ -79,3 +79,6 @@ Set `DB_URL`, `DB_USERNAME`, and `DB_PASSWORD`, then run `./mvnw spring-boot:run
 - Java 25 and Spring Boot 4.1.0 are configured to align with the requested environment.
 - Search uses dynamic JPA specifications and returns a Spring Data page.
 - Errors use Spring Problem Details with Work Action-specific error codes.
+- The service consumes Disclosure `receipt-display` Kafka events using consumer group
+  `work-action-receipt-display`. Configure `KAFKA_BOOTSTRAP_SERVERS` and optionally
+  `KAFKA_RECEIPT_DISPLAY_TOPIC` / `KAFKA_RECEIPT_DISPLAY_GROUP`.

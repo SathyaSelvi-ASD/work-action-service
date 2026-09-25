@@ -8,6 +8,7 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="disclosureapplication" />
+        <module name="work-action-service" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
@@ -18,6 +19,7 @@
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="disclosureapplication" options="-parameters" />
       <module name="work-action" options="-parameters" />
+      <module name="work-action-service" options="-parameters" />
     </option>
   </component>
 </project>
